@@ -148,6 +148,7 @@ const LocationService = () => {
   const [userName, setUserName] = useState("")
   const [userEmail, setUserEmail] = useState("")
   const [isSUV, setIsSUV] = useState(false)
+  const [isFlatbed, setIsFlatbed] = useState(false)
   const [suggestions, setSuggestions] = useState({ start: [], end: [] })
   const [showPaymentModal, setShowPaymentModal] = useState(false)
   const [directPaymentAmount, setDirectPaymentAmount] = useState("")
@@ -230,6 +231,7 @@ const LocationService = () => {
       pickup_latitude: startPosition.lat.toString(),
       pickup_longitude: startPosition.lng.toString(),
       is_SUV: isSUV,
+      is_FLATBED: isFlatbed,
       order_type: "TOW_TRUCK",
       user_name: userName,
       user_email: userEmail,
@@ -415,6 +417,20 @@ const LocationService = () => {
                 />
                 <label htmlFor="suv" className="text-sm font-medium text-white">
                   Is this for an SUV?
+                </label>
+              </div>
+
+              {/* Flatbed Checkbox */}
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="flatbed"
+                  checked={isFlatbed}
+                  onChange={(e) => setIsFlatbed(e.target.checked)}
+                  className="h-4 w-4 text-[#FF8500] focus:ring-[#FF8500]"
+                />
+                <label htmlFor="flatbed" className="text-sm font-medium text-white">
+                  Is this a Flatbed?
                 </label>
               </div>
 
