@@ -1,65 +1,84 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from "react-leaflet"
-import "leaflet/dist/leaflet.css"
-import L from "leaflet"
-import axios from "axios"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
-import { Copy } from "lucide-react"
+import { useState, useEffect } from "react";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  useMap,
+  useMapEvents,
+} from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+import axios from "axios";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { Copy } from "lucide-react";
 
 // Configure Leaflet icons
-delete L.Icon.Default.prototype._getIconUrl
+delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-icon-2x.png",
-  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-icon.png",
-  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-shadow.png",
-})
+  iconRetinaUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-icon-2x.png",
+  iconUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-icon.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-shadow.png",
+});
 
 // LocationMarker component
 const LocationMarker = ({ position, setPosition }) => {
-  const map = useMap()
+  const map = useMap();
 
   useEffect(() => {
     if (position) {
-      map.flyTo(position, 13)
+      map.flyTo(position, 13);
     }
-  }, [position, map])
+  }, [position, map]);
 
   useMapEvents({
     click(e) {
-      setPosition(e.latlng)
+      setPosition(e.latlng);
     },
-  })
+  });
 
-  return position ? <Marker position={position} /> : null
-}
+  return position ? <Marker position={position} /> : null;
+};
 
 // MapComponent
 const MapComponent = ({ position, setPosition, defaultCenter }) => {
   return (
-    <MapContainer center={defaultCenter} zoom={13} style={{ height: "300px" }} className="rounded-lg">
+    <MapContainer
+      center={defaultCenter}
+      zoom={13}
+      style={{ height: "300px" }}
+      className="rounded-lg"
+    >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       <LocationMarker position={position} setPosition={setPosition} />
     </MapContainer>
-  )
-}
+  );
+};
 
 // Payment Modal Component
 const PaymentModal = ({ result, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-8 rounded-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4 text-[#3B3835]">Service Details</h2>
+        <h2 className="text-2xl font-bold mb-4 text-[#3B3835]">
+          Service Details
+        </h2>
         <div className="space-y-3">
           <p className="text-[#3B3835]">
-            <span className="font-semibold">Distance:</span> {result.distance} km
+            <span className="font-semibold">Distance:</span> {result.distance}{" "}
+            km
           </p>
           <p className="text-[#3B3835]">
-            <span className="font-semibold">Estimated Time:</span> {result.durationInMinutes} minutes
+            <span className="font-semibold">Estimated Time:</span>{" "}
+            {result.durationInMinutes} minutes
           </p>
           <p className="text-[#3B3835]">
-            <span className="font-semibold">Total Price:</span> ₦{result.total_price?.toLocaleString()}
+            <span className="font-semibold">Total Price:</span> ₦
+            {result.normal_price?.toLocaleString()}
           </p>
           {result.paymentDetails?.data?.authorization_url && (
             <a
@@ -72,49 +91,63 @@ const PaymentModal = ({ result, onClose }) => {
             </a>
           )}
         </div>
-        <button onClick={onClose} className="mt-6 text-sm text-gray-600 hover:text-gray-900">
+        <button
+          onClick={onClose}
+          className="mt-6 text-sm text-gray-600 hover:text-gray-900"
+        >
           Close
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
 // Direct Payment Modal Component
 const DirectPaymentModal = ({ result, onClose }) => {
-  const [copySuccess, setCopySuccess] = useState(false)
+  const [copySuccess, setCopySuccess] = useState(false);
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text).then(
       () => {
-        setCopySuccess(true)
-        setTimeout(() => setCopySuccess(false), 2000)
+        setCopySuccess(true);
+        setTimeout(() => setCopySuccess(false), 2000);
       },
       (err) => {
-        console.error("Could not copy text: ", err)
-      },
-    )
-  }
+        console.error("Could not copy text: ", err);
+      }
+    );
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-8 rounded-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4 text-[#3B3835]">Payment Details</h2>
+        <h2 className="text-2xl font-bold mb-4 text-[#3B3835]">
+          Payment Details
+        </h2>
         <div className="space-y-3">
           <p className="text-[#3B3835]">
-            <span className="font-semibold">Amount:</span> ₦{result.amount?.toLocaleString()}
+            <span className="font-semibold">Amount:</span> ₦
+            {result.amount?.toLocaleString()}
           </p>
 
           {result.paymentDetails?.data?.authorization_url && (
             <div className="mt-4 space-y-3">
               <div className="flex items-center gap-2">
-                <p className="text-sm text-gray-600 truncate flex-1">{result.paymentDetails.data.authorization_url}</p>
+                <p className="text-sm text-gray-600 truncate flex-1">
+                  {result.paymentDetails.data.authorization_url}
+                </p>
                 <button
-                  onClick={() => copyToClipboard(result.paymentDetails.data.authorization_url)}
+                  onClick={() =>
+                    copyToClipboard(
+                      result.paymentDetails.data.authorization_url
+                    )
+                  }
                   className="p-2 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
                 >
                   <Copy size={16} />
-                  {copySuccess && <span className="ml-2 text-xs text-green-600">Copied!</span>}
+                  {copySuccess && (
+                    <span className="ml-2 text-xs text-green-600">Copied!</span>
+                  )}
                 </button>
               </div>
               <a
@@ -128,102 +161,111 @@ const DirectPaymentModal = ({ result, onClose }) => {
             </div>
           )}
         </div>
-        <button onClick={onClose} className="mt-6 text-sm text-gray-600 hover:text-gray-900">
+        <button
+          onClick={onClose}
+          className="mt-6 text-sm text-gray-600 hover:text-gray-900"
+        >
           Close
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
 // Main component
 const LocationService = () => {
-  const [startPosition, setStartPosition] = useState(null)
-  const [endPosition, setEndPosition] = useState(null)
-  const [result, setResult] = useState(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [defaultCenter, setDefaultCenter] = useState([6.5244, 3.3792])
-  const [startAddress, setStartAddress] = useState("")
-  const [endAddress, setEndAddress] = useState("")
-  const [userName, setUserName] = useState("")
-  const [userEmail, setUserEmail] = useState("")
-  const [isSUV, setIsSUV] = useState(false)
-  const [isFlatbed, setIsFlatbed] = useState(false)
-  const [suggestions, setSuggestions] = useState({ start: [], end: [] })
-  const [showPaymentModal, setShowPaymentModal] = useState(false)
-  const [directPaymentAmount, setDirectPaymentAmount] = useState("")
-  const [directPaymentResult, setDirectPaymentResult] = useState(null)
-  const [showDirectPaymentModal, setShowDirectPaymentModal] = useState(false)
+  const [startPosition, setStartPosition] = useState(null);
+  const [endPosition, setEndPosition] = useState(null);
+  const [result, setResult] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [defaultCenter, setDefaultCenter] = useState([6.5244, 3.3792]);
+  const [startAddress, setStartAddress] = useState("");
+  const [endAddress, setEndAddress] = useState("");
+  const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+  const [isSUV, setIsSUV] = useState(false);
+  const [isFlatbed, setIsFlatbed] = useState(false);
+  const [suggestions, setSuggestions] = useState({ start: [], end: [] });
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [directPaymentAmount, setDirectPaymentAmount] = useState("");
+  const [directPaymentResult, setDirectPaymentResult] = useState(null);
+  const [showDirectPaymentModal, setShowDirectPaymentModal] = useState(false);
 
   // Load Google Maps script
   useEffect(() => {
-    const script = document.createElement("script")
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}&libraries=places`
-    script.async = true
-    script.onload = () => console.log("Google Maps loaded")
-    document.head.appendChild(script)
+    const script = document.createElement("script");
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${
+      import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+    }&libraries=places`;
+    script.async = true;
+    script.onload = () => console.log("Google Maps loaded");
+    document.head.appendChild(script);
 
     return () => {
-      document.head.removeChild(script)
-    }
-  }, [])
+      document.head.removeChild(script);
+    };
+  }, []);
 
   // Handle address predictions
   const getPredictions = async (input, type) => {
     if (!window.google || !input.trim()) {
-      setSuggestions((prev) => ({ ...prev, [type]: [] }))
-      return
+      setSuggestions((prev) => ({ ...prev, [type]: [] }));
+      return;
     }
 
     try {
-      const service = new window.google.maps.places.AutocompleteService()
+      const service = new window.google.maps.places.AutocompleteService();
       const predictions = await new Promise((resolve, reject) => {
-        service.getPlacePredictions({ input, componentRestrictions: { country: "ng" } }, (results, status) =>
-          status === "OK" ? resolve(results) : reject(status),
-        )
-      })
-      setSuggestions((prev) => ({ ...prev, [type]: predictions }))
+        service.getPlacePredictions(
+          { input, componentRestrictions: { country: "ng" } },
+          (results, status) =>
+            status === "OK" ? resolve(results) : reject(status)
+        );
+      });
+      setSuggestions((prev) => ({ ...prev, [type]: predictions }));
     } catch (error) {
-      console.error("Prediction error:", error)
-      setSuggestions((prev) => ({ ...prev, [type]: [] }))
+      console.error("Prediction error:", error);
+      setSuggestions((prev) => ({ ...prev, [type]: [] }));
     }
-  }
+  };
 
   // Handle address selection
   const handleAddressSelect = async (address, type) => {
     try {
-      const geocoder = new window.google.maps.Geocoder()
+      const geocoder = new window.google.maps.Geocoder();
       const results = await new Promise((resolve, reject) => {
-        geocoder.geocode({ address }, (results, status) => (status === "OK" ? resolve(results) : reject(status)))
-      })
+        geocoder.geocode({ address }, (results, status) =>
+          status === "OK" ? resolve(results) : reject(status)
+        );
+      });
 
       if (results && results[0]) {
-        const location = results[0].geometry.location
-        const position = { lat: location.lat(), lng: location.lng() }
+        const location = results[0].geometry.location;
+        const position = { lat: location.lat(), lng: location.lng() };
 
         if (type === "start") {
-          setStartPosition(position)
-          setStartAddress(results[0].formatted_address)
+          setStartPosition(position);
+          setStartAddress(results[0].formatted_address);
         } else {
-          setEndPosition(position)
-          setEndAddress(results[0].formatted_address)
+          setEndPosition(position);
+          setEndAddress(results[0].formatted_address);
         }
-        setSuggestions((prev) => ({ ...prev, [type]: [] }))
+        setSuggestions((prev) => ({ ...prev, [type]: [] }));
       }
     } catch (error) {
-      console.error("Geocoding error:", error)
+      console.error("Geocoding error:", error);
     }
-  }
+  };
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (!startPosition || !endPosition || !userName || !userEmail) {
-      alert("Please fill in all required fields")
-      return
+      alert("Please fill in all required fields");
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     const payload = {
       dropoff_longitude: endPosition.lng.toString(),
@@ -235,61 +277,70 @@ const LocationService = () => {
       order_type: "TOW_TRUCK",
       user_name: userName,
       user_email: userEmail,
-    }
+    };
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_API_URL}/admin/offlineOrderDetails`, payload, {
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_AUTH_TOKEN}`,
-          "x-resqx-key": import.meta.env.VITE_RESQX_KEY,
-        },
-      })
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_API_URL}/admin/offlineOrderDetails`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${import.meta.env.VITE_AUTH_TOKEN}`,
+            "x-resqx-key": import.meta.env.VITE_RESQX_KEY,
+          },
+        }
+      );
 
       if (response.data.success) {
-        setResult(response.data.data)
-        setShowPaymentModal(true)
+        setResult(response.data.data);
+        setShowPaymentModal(true);
       }
     } catch (error) {
-      console.error("API Error:", error)
-      alert("Error submitting request. Please try again.")
+      console.error("API Error:", error);
+      alert("Error submitting request. Please try again.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleDirectPaymentSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (!userName || !userEmail || !directPaymentAmount) {
-      alert("Please fill in all required fields")
-      return
+      alert("Please fill in all required fields");
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_API_URL}/admin/offline_get_payment_Link`, {
-        params: {
-          user_name: userName,
-          user_email: userEmail,
-          amount: directPaymentAmount,
-        },
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_AUTH_TOKEN}`,
-          "x-resqx-key": import.meta.env.VITE_RESQX_KEY,
-        },
-      })
+      const response = await axios.get(
+        `${
+          import.meta.env.VITE_BACKEND_API_URL
+        }/admin/offline_get_payment_Link`,
+        {
+          params: {
+            user_name: userName,
+            user_email: userEmail,
+            amount: directPaymentAmount,
+          },
+          headers: {
+            Authorization: `Bearer ${import.meta.env.VITE_AUTH_TOKEN}`,
+            "x-resqx-key": import.meta.env.VITE_RESQX_KEY,
+          },
+        }
+      );
 
       if (response.data.success) {
-        setDirectPaymentResult(response.data.data)
-        setShowDirectPaymentModal(true)
+        setDirectPaymentResult(response.data.data);
+        setShowDirectPaymentModal(true);
       }
     } catch (error) {
-      console.error("API Error:", error)
-      alert("Error submitting request. Please try again.")
+      console.error("API Error:", error);
+      alert("Error submitting request. Please try again.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-[#fff] p-8 md:p-16 overflow-x-hidden">
@@ -304,18 +355,23 @@ const LocationService = () => {
             <TabsTrigger value="direct">Direct Payment</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="location" className="bg-[#332414] p-6 md:p-8 rounded-lg shadow-lg">
+          <TabsContent
+            value="location"
+            className="bg-[#332414] p-6 md:p-8 rounded-lg shadow-lg"
+          >
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Start Location Section */}
               <div className="space-y-4 relative">
-                <label className="block text-sm font-medium text-white">Start Location</label>
+                <label className="block text-sm font-medium text-white">
+                  Start Location
+                </label>
                 <div className="relative">
                   <input
                     type="text"
                     value={startAddress}
                     onChange={(e) => {
-                      setStartAddress(e.target.value)
-                      getPredictions(e.target.value, "start")
+                      setStartAddress(e.target.value);
+                      getPredictions(e.target.value, "start");
                     }}
                     placeholder="Enter start address"
                     className="w-full px-3 py-2 bg-[#FAF8F5] text-[#3B3835] rounded-md"
@@ -326,7 +382,9 @@ const LocationService = () => {
                         <div
                           key={index}
                           className="p-2 hover:bg-gray-100 cursor-pointer text-black"
-                          onClick={() => handleAddressSelect(item.description, "start")}
+                          onClick={() =>
+                            handleAddressSelect(item.description, "start")
+                          }
                         >
                           {item.description}
                         </div>
@@ -335,25 +393,32 @@ const LocationService = () => {
                   )}
                 </div>
                 <div className="relative z-10">
-                  <MapComponent position={startPosition} setPosition={setStartPosition} defaultCenter={defaultCenter} />
+                  <MapComponent
+                    position={startPosition}
+                    setPosition={setStartPosition}
+                    defaultCenter={defaultCenter}
+                  />
                 </div>
                 {startPosition && (
                   <p className="text-sm text-gray-300">
-                    Coordinates: {startPosition.lat.toFixed(6)}, {startPosition.lng.toFixed(6)}
+                    Coordinates: {startPosition.lat.toFixed(6)},{" "}
+                    {startPosition.lng.toFixed(6)}
                   </p>
                 )}
               </div>
 
               {/* End Location Section */}
               <div className="space-y-4 relative">
-                <label className="block text-sm font-medium text-white">End Location</label>
+                <label className="block text-sm font-medium text-white">
+                  End Location
+                </label>
                 <div className="relative">
                   <input
                     type="text"
                     value={endAddress}
                     onChange={(e) => {
-                      setEndAddress(e.target.value)
-                      getPredictions(e.target.value, "end")
+                      setEndAddress(e.target.value);
+                      getPredictions(e.target.value, "end");
                     }}
                     placeholder="Enter end address"
                     className="w-full px-3 py-2 bg-[#FAF8F5] text-[#3B3835] rounded-md"
@@ -364,7 +429,9 @@ const LocationService = () => {
                         <div
                           key={index}
                           className="p-2 hover:bg-gray-100 cursor-pointer text-black"
-                          onClick={() => handleAddressSelect(item.description, "end")}
+                          onClick={() =>
+                            handleAddressSelect(item.description, "end")
+                          }
                         >
                           {item.description}
                         </div>
@@ -373,11 +440,16 @@ const LocationService = () => {
                   )}
                 </div>
                 <div className="relative z-10">
-                  <MapComponent position={endPosition} setPosition={setEndPosition} defaultCenter={defaultCenter} />
+                  <MapComponent
+                    position={endPosition}
+                    setPosition={setEndPosition}
+                    defaultCenter={defaultCenter}
+                  />
                 </div>
                 {endPosition && (
                   <p className="text-sm text-gray-300">
-                    Coordinates: {endPosition.lat.toFixed(6)}, {endPosition.lng.toFixed(6)}
+                    Coordinates: {endPosition.lat.toFixed(6)},{" "}
+                    {endPosition.lng.toFixed(6)}
                   </p>
                 )}
               </div>
@@ -385,7 +457,9 @@ const LocationService = () => {
               {/* User Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-white">User Name</label>
+                  <label className="block text-sm font-medium text-white">
+                    User Name
+                  </label>
                   <input
                     type="text"
                     value={userName}
@@ -395,7 +469,9 @@ const LocationService = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-white">User Email</label>
+                  <label className="block text-sm font-medium text-white">
+                    User Email
+                  </label>
                   <input
                     type="email"
                     value={userEmail}
@@ -429,7 +505,10 @@ const LocationService = () => {
                   onChange={(e) => setIsFlatbed(e.target.checked)}
                   className="h-4 w-4 text-[#FF8500] focus:ring-[#FF8500]"
                 />
-                <label htmlFor="flatbed" className="text-sm font-medium text-white">
+                <label
+                  htmlFor="flatbed"
+                  className="text-sm font-medium text-white"
+                >
                   Is this a Flatbed?
                 </label>
               </div>
@@ -442,7 +521,10 @@ const LocationService = () => {
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center">
-                    <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
+                    <svg
+                      className="animate-spin h-5 w-5 mr-3"
+                      viewBox="0 0 24 24"
+                    >
                       <circle
                         className="opacity-25"
                         cx="12"
@@ -467,12 +549,17 @@ const LocationService = () => {
             </form>
           </TabsContent>
 
-          <TabsContent value="direct" className="bg-[#332414] p-6 md:p-8 rounded-lg shadow-lg">
+          <TabsContent
+            value="direct"
+            className="bg-[#332414] p-6 md:p-8 rounded-lg shadow-lg"
+          >
             <form onSubmit={handleDirectPaymentSubmit} className="space-y-6">
               {/* User Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-white">User Name</label>
+                  <label className="block text-sm font-medium text-white">
+                    User Name
+                  </label>
                   <input
                     type="text"
                     value={userName}
@@ -483,7 +570,9 @@ const LocationService = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-white">User Email</label>
+                  <label className="block text-sm font-medium text-white">
+                    User Email
+                  </label>
                   <input
                     type="email"
                     value={userEmail}
@@ -497,7 +586,9 @@ const LocationService = () => {
 
               {/* Amount Input */}
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-white">Amount (₦)</label>
+                <label className="block text-sm font-medium text-white">
+                  Amount (₦)
+                </label>
                 <input
                   type="number"
                   value={directPaymentAmount}
@@ -516,7 +607,10 @@ const LocationService = () => {
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center">
-                    <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
+                    <svg
+                      className="animate-spin h-5 w-5 mr-3"
+                      viewBox="0 0 24 24"
+                    >
                       <circle
                         className="opacity-25"
                         cx="12"
@@ -544,15 +638,22 @@ const LocationService = () => {
       </div>
 
       {/* Payment Modal */}
-      {showPaymentModal && result && <PaymentModal result={result} onClose={() => setShowPaymentModal(false)} />}
+      {showPaymentModal && result && (
+        <PaymentModal
+          result={result}
+          onClose={() => setShowPaymentModal(false)}
+        />
+      )}
 
       {/* Direct Payment Modal */}
       {showDirectPaymentModal && directPaymentResult && (
-        <DirectPaymentModal result={directPaymentResult} onClose={() => setShowDirectPaymentModal(false)} />
+        <DirectPaymentModal
+          result={directPaymentResult}
+          onClose={() => setShowDirectPaymentModal(false)}
+        />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default LocationService
-
+export default LocationService;
