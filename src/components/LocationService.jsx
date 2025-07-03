@@ -83,10 +83,10 @@ const PaymentModal = ({ result, onClose }) => {
             <span className="font-semibold">Flatbed Price:</span> ₦
             {result.flatbed_price?.toLocaleString()}
           </p>
-          <p className="text-[#3B3835]">
+          {/* <p className="text-[#3B3835]">
             <span className="font-semibold">Nighttime Price:</span> ₦
             {result.nighttime_price?.toLocaleString()}
-          </p>
+          </p> */}
           {result.paymentDetails?.data?.authorization_url && (
             <a
               href={result.paymentDetails.data.authorization_url}
@@ -525,7 +525,7 @@ const LocationService = () => {
               </div> */}
 
               {/* Night Time Checkbox */}
-              {/* <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
                   id="nighttime"
@@ -539,7 +539,7 @@ const LocationService = () => {
                 >
                   Is this for Night Time?
                 </label>
-              </div> */}
+              </div>
 
               {/* Submit Button */}
               <button
