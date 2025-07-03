@@ -76,8 +76,16 @@ const PaymentModal = ({ result, onClose }) => {
             {result.durationInMinutes} minutes
           </p>
           <p className="text-[#3B3835]">
-            <span className="font-semibold">Total Price:</span> ₦
+            <span className="font-semibold">Normal Price:</span> ₦
             {result.normal_price?.toLocaleString()}
+          </p>
+          <p className="text-[#3B3835]">
+            <span className="font-semibold">Flatbed Price:</span> ₦
+            {result.flatbed_price?.toLocaleString()}
+          </p>
+          <p className="text-[#3B3835]">
+            <span className="font-semibold">Nighttime Price:</span> ₦
+            {result.nighttime_price?.toLocaleString()}
           </p>
           {result.paymentDetails?.data?.authorization_url && (
             <a
@@ -189,6 +197,7 @@ const LocationService = () => {
   const [directPaymentAmount, setDirectPaymentAmount] = useState("");
   const [directPaymentResult, setDirectPaymentResult] = useState(null);
   const [showDirectPaymentModal, setShowDirectPaymentModal] = useState(false);
+  const [isNightTime, setIsNightTime] = useState(false);
 
   // Load Google Maps script
   useEffect(() => {
@@ -276,7 +285,10 @@ const LocationService = () => {
       order_type: "TOW_TRUCK",
       user_name: userName,
       user_email: userEmail,
+      is_NIGHTTIME: isNightTime,
     };
+
+    console.log("Payload:", payload);
 
     try {
       const response = await axios.post(
@@ -496,7 +508,7 @@ const LocationService = () => {
               </div>
 
               {/* Flatbed Checkbox */}
-              <div className="flex items-center space-x-2">
+              {/* <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
                   id="flatbed"
@@ -510,7 +522,24 @@ const LocationService = () => {
                 >
                   Is this a Flatbed?
                 </label>
-              </div>
+              </div> */}
+
+              {/* Night Time Checkbox */}
+              {/* <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="nighttime"
+                  checked={isNightTime}
+                  onChange={(e) => setIsNightTime(e.target.checked)}
+                  className="h-4 w-4 text-[#FF8500] focus:ring-[#FF8500]"
+                />
+                <label
+                  htmlFor="nighttime"
+                  className="text-sm font-medium text-white"
+                >
+                  Is this for Night Time?
+                </label>
+              </div> */}
 
               {/* Submit Button */}
               <button

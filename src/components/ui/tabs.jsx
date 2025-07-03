@@ -1,24 +1,22 @@
-// components/ui/tabs.jsx
-"use client"
+/* eslint-disable react/prop-types */
+import React from "react";
+import * as TabsPrimitive from "@radix-ui/react-tabs";
 
-import * as React from "react"
-import * as TabsPrimitive from "@radix-ui/react-tabs"
+import { cn } from "../../lib/utils";
 
-import { cn } from "../../lib/utils"
-
-const Tabs = TabsPrimitive.Root
+const Tabs = TabsPrimitive.Root;
 
 const TabsList = React.forwardRef(({ className, ...props }, ref) => (
   <TabsPrimitive.List
     ref={ref}
     className={cn(
       "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
-      className 
+      className
     )}
     {...props}
   />
-))
-TabsList.displayName = "TabsList"
+));
+TabsList.displayName = "TabsList";
 
 const TabsTrigger = React.forwardRef(({ className, ...props }, ref) => (
   <TabsPrimitive.Trigger
@@ -29,8 +27,8 @@ const TabsTrigger = React.forwardRef(({ className, ...props }, ref) => (
     )}
     {...props}
   />
-))
-TabsTrigger.displayName = "TabsTrigger"
+));
+TabsTrigger.displayName = "TabsTrigger";
 
 const TabsContent = React.forwardRef(({ className, ...props }, ref) => (
   <TabsPrimitive.Content
@@ -41,7 +39,7 @@ const TabsContent = React.forwardRef(({ className, ...props }, ref) => (
     )}
     {...props}
   />
-))
-TabsContent.displayName = "TabsContent"
+));
+TabsContent.displayName = "TabsContent";
 
-export { Tabs, TabsList, TabsTrigger, TabsContent }
+export { Tabs, TabsList, TabsTrigger, TabsContent };
